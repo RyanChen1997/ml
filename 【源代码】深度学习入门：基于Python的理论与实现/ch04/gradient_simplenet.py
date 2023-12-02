@@ -25,7 +25,11 @@ t = np.array([0, 0, 1])
 
 net = simpleNet()
 
-f = lambda w: net.loss(x, t)
+# f = lambda w: net.loss(x, t)
+def f(W):
+    y = net.loss(x, t)
+    print(y)
+    return y
 dW = numerical_gradient(f, net.W)
 
 print(dW)
