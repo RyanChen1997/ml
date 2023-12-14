@@ -2,8 +2,8 @@ import os
 from PIL import Image
 import numpy as np
 
-img_file_path_train = "/Users/ryan/Documents/fruit/archive/train_zip"
-img_file_path_test = "/Users/ryan/Documents/fruit/archive/test_zip"
+img_file_path_train = "/home/cyx/document/archive/train_zip"
+img_file_path_test = "/home/cyx/document/archive/test_zip"
 image_shape = (100, 100)
 
 
@@ -98,3 +98,6 @@ def _change_one_hot_label(X):
 
 def _valid_image(data):
     return data.shape[0] / image_shape[0] / image_shape[1] == 3.0
+
+def read_img(file_name):
+    return _read_img(file_name)

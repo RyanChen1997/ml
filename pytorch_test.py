@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from torch import nn
-from load_data import load_data
+from load_data import load_data, read_img
 
 device = (
     "cuda"
@@ -47,9 +47,9 @@ def train(dataloader, model, loss_fn, optimizer):
         optimizer.step()
         optimizer.zero_grad()
 
-        if batch % 100 == 0:
-            loss, current = loss.item(), (batch + 1) * len(X)
-            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+        # if batch % 100 == 0:
+        loss, current = loss.item(), (batch + 1) * len(X)
+        print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
 def test(dataloader, model, loss_fn):
     size = len(dataloader.dataset)
@@ -83,9 +83,9 @@ def optimize():
 
     # optmize
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters, lr=1e-3)
+    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 
-    epochs = 5
+    epochs = 50
     for t in range(epochs):
         print(f"Epoch {t+1}\n-------------------------------")
         train(train_dataloader, model, loss_fn, optimizer)
@@ -97,7 +97,33 @@ def optimize():
     print("Saved PyTorch Model State to model.pth")
 
 def predict():
-    pass
+    classes = [
+        "apple",
+        "banana",
+        "orange",
+        "mixed",
+    ]
+    # 选一张图片
+    image_path = "./orange.jpeg"
+
+    # 初始化network
+    model = NeuralNetwork().to(device=device)
+    model.load_state_dict(torch.load("model.pth"))
+
+    # 准备数据
+    x = read_img(image_path)
+    x = x.astype("float32") / 255.0
+    x = x.reshape(1, 3, 100, 100)
+    x = torch.Tensor(x)
+
+    # 推理
+    model.eval()
+    with torch.no_grad():
+        x = x.to(device)
+        pred = model(x)
+        predicted = classes[pred[0].argmax(0)]
+        print(f"predicted: {predicted}")
 
 if __name__ == "__main__":
-    optimize()
+    # optimize()
+    predict()
